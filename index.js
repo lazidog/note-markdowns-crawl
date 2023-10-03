@@ -51,7 +51,8 @@ async function getLatestCommitDate() {
       headers: { 'User-Agent': 'Mozzila/5.0' },
     }
   );
-  const $ = cheerio.load(html);
+  const body = await html.text();
+  const $ = cheerio.load(body);
   const info = $('relative-time');
   let latestCommitDate = '1900-01-01T00:00:00+07:00';
   info.each(function () {
@@ -60,11 +61,14 @@ async function getLatestCommitDate() {
       latestCommitDate = date;
     }
   });
+  return latestCommitDate;
 }
 
 async function newCommitAvailable(latestCommitDate) {
   const newLatestCommitDate = await getLatestCommitDate();
-  return latestCommitDate !== newLatestCommitDate;
+  return latestCommitDate !== newLatestCommitDate
+    ? newLatestCommitDate
+    : undefined;
 }
 
 function readStructure() {
@@ -96,6 +100,4 @@ async function getRepoStructure() {
   return repoStructure;
 }
 
-(async () => {
-  getRepoStructure();
-})();
+module.exports = getRepoStructure;
