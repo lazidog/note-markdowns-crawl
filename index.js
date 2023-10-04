@@ -12,12 +12,14 @@ function fetchTreeItems(url) {
 }
 
 function formatData(data, category = 'Common') {
-  return data.map(e => {
+  return data.map((e, i) => {
     const img = e.name.slice(e.name.indexOf('[') + 1, e.name.indexOf(']'));
     return {
-      title: e.name.slice(e.name.indexOf(']') + 1),
+      id: i,
+      title: e.name.slice(e.name.indexOf(']') + 2, e.name.indexOf('.')),
       path: `https://raw.githubusercontent.com/lazidog/note-markdowns/main/${e.path}`,
       category: category,
+      tags: [category, img],
       image: `https://raw.githubusercontent.com/lazidog/note-markdowns/main/images/${img}.png`,
     };
   });
@@ -94,7 +96,7 @@ async function getRepoStructure() {
   const newLatestCommitDate = await newCommitAvailable(repoStructure.date);
   if (newLatestCommitDate) {
     repoStructure.date = newLatestCommitDate;
-    repoStructure.data = await updateRepoStructure();
+    repoStructure.posts = await updateRepoStructure();
     await writeStructure(repoStructure);
   }
   return repoStructure;

@@ -1,0 +1,3 @@
+const getRepoStructure = require('.');
+
+getRepoStructure();
